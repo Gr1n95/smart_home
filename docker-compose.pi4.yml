@@ -1,0 +1,63 @@
+# Pi4 - HOME BRAIN - критичный узел, всегда включен
+# IP: 192.168.4.1 (AP) и 10.0.0.1 (eth к Pi5)
+# Запуск: docker compose -f docker-compose.pi4.yml up -d
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+    restart: unless-stopped
+    # LWT для детекта падения Pi5
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    network_mode: host
+    volumes:
+      - ./ha_config:/config
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+
+  influxdb:
+    image: influxdb:2.7
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb:/var/lib/influxdb2
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SERVER_HTTP_PORT=3000
+    restart: unless-stopped
+
+  regulator:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - /dev/gpiomem:/dev/gpiomem
+    privileged: true
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    # Тут логика: газ, климат, реле, сирена
+    # GPIO для реле и сирены
+
+  # hostapd и dnsmasq лучше ставить на хост, а не в докере
+  # Но можно и так:
+  # wifi-ap:
+  #   image: ...
