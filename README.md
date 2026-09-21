@@ -13,6 +13,9 @@
 5.  [**03_SOFTWARE_PLAN.md**](./docs/03_SOFTWARE_PLAN.md) — как писать софт, примеры кода ESPHome / Python
 6.  [**04_IMPLEMENTATION_ROADMAP.md**](./docs/04_IMPLEMENTATION_ROADMAP.md) — пошаговый план на 8 недель
 7.  [**05_OFFLINE_SETUP.md**](./docs/05_OFFLINE_SETUP.md) — чеклист настройки без интернета, WiFi AP, RTC, модели
+8.  [**01c_CORAL_INTEGRATION.md**](./docs/01c_CORAL_INTEGRATION.md) — **интеграция твоего Coral M.2 TPU, бенчмарки, Frigate + BlazeFace**
+9.  [`frigate/config.yml`](./frigate/config.yml) — конфиг Frigate для Pi5 + Coral pci:0
+10. [`services/face/coral_face_detector.py`](./services/face/coral_face_detector.py) — сервис FaceID на Coral + InsightFace
 
 ## 🚀 Быстрый старт MVP
 

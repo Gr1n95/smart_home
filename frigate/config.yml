@@ -1,0 +1,99 @@
+# Frigate config for Pi5 + Coral M.2 TPU (PCIe)
+# Based on Gr1n95/Raspberry-Pi5-Edge-M.2-Coral_TPU setup
+# Place at ./frigate/config.yml
+
+mqtt:
+  host: 10.0.0.1  # Pi4 Home Brain
+  port: 1883
+  user: garage
+  password: garage2026
+
+detectors:
+  coral:
+    type: edgetpu
+    device: pci:0  # M.2 Coral -> /dev/apex_0
+    # If dual TPU: pci:0, pci:1
+
+# For Pi5 hardware acceleration
+ffmpeg:
+  hwaccel_args: preset-rpi-64-h264
+
+cameras:
+  garage_main:
+    ffmpeg:
+      inputs:
+        - path: /dev/video0  # PiCam3 NoIR via libcamera
+          input_args: preset-rpi-64-h264
+          roles:
+            - detect
+            - record
+      # Or use go2rtc for PiCam:
+      # inputs:
+      #   - path: rtsp://127.0.0.1:8554/garage_cam
+      #     roles:
+      #       - detect
+
+    detect:
+      width: 1280
+      height: 720
+      fps: 5  # 5 fps enough for garage, saves CPU
+      enabled: true
+
+    objects:
+      track:
+        - person
+        - car
+        - bicycle
+      filters:
+        person:
+          min_area: 5000
+          threshold: 0.65
+        car:
+          min_area: 10000
+          threshold: 0.7
+
+    motion:
+      mask:
+        - 0,0,0,720,1280,720,1280,0  # full frame, adjust for garage door
+      threshold: 30
+
+    snapshots:
+      enabled: true
+      timestamp: true
+      bounding_box: true
+      crop: true
+      retain:
+        default: 10  # days
+
+    record:
+      enabled: true
+      retain:
+        days: 7
+      events:
+        retain:
+          default: 14
+          mode: motion
+
+  # Optional: second camera at entrance for FaceID
+  entrance:
+    ffmpeg:
+      inputs:
+        - path: rtsp://192.168.4.30:554/stream  # IP cam or ESP32-CAM
+          roles:
+            - detect
+    detect:
+      width: 640
+      height: 480
+      fps: 5
+    objects:
+      track:
+        - person
+    snapshots:
+      enabled: true
+
+# For offline garage - no internet, so disable stats
+stats:
+  # ...
+
+# Events -> MQTT -> Home Assistant
+# garage_main/person -> garage/security/person_detected
