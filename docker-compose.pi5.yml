@@ -1,0 +1,105 @@
+# Pi5 - AI BRAIN - тяжелый узел, глаза и уши
+# IP: 10.0.0.2 (eth к Pi4) и 192.168.4.2 (wifi клиент GarageNet)
+# Запуск: docker compose -f docker-compose.pi5.yml up -d
+# Требует: 8GB RAM, SSD, опционально Hailo HAT
+
+services:
+  face_service:
+    build: ./services/face
+    volumes:
+      - ./data/faces:/app/faces
+      - /dev/video0:/dev/video0 # PiCam
+    devices:
+      - /dev/video0:/dev/video0
+    privileged: true
+    restart: unless-stopped
+    environment:
+      - MQTT_BROKER=10.0.0.1
+      - MODEL=buffalo_s # легкий, для Pi5
+    # Публикует в garage/access/face/result
+
+  fingerprint_service:
+    build: ./services/fingerprint
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0 # R503
+    privileged: true
+    restart: unless-stopped
+    environment:
+      - MQTT_BROKER=10.0.0.1
+
+  radar_service:
+    build: ./services/radar
+    devices:
+      - /dev/ttyAMA0:/dev/ttyAMA0 # LD2450
+    privileged: true
+    restart: unless-stopped
+    environment:
+      - MQTT_BROKER=10.0.0.1
+
+  whisper:
+    image: rhasspy/wyoming-whisper:latest
+    ports:
+      - "10300:10300"
+    volumes:
+      - ./models/whisper:/data
+    command: --model small --language ru --data-dir /data
+    restart: unless-stopped
+    # Скачать модель заранее: small или tiny
+
+  piper:
+    image: rhasspy/wyoming-piper:latest
+    ports:
+      - "10200:10200"
+    volumes:
+      - ./models/piper:/data
+    command: --voice ru_RU-irina-medium --data-dir /data
+    restart: unless-stopped
+
+  openwakeword:
+    image: rhasspy/wyoming-openwakeword:latest
+    ports:
+      - "10400:10400"
+    volumes:
+      - ./models/wakeword:/data
+    command: --preload-model 'hey_jarvis' --data-dir /data
+    restart: unless-stopped
+    # Для кастомного "привет гараж" надо обучить
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./models/ollama:/root/.ollama
+    restart: unless-stopped
+    # Модель: phi3:mini 3.8B Q4 - самая оптимальная для Pi5
+    # Запуск вручную: docker exec ollama ollama pull phi3:mini
+    # Без интернета: скопировать модели с ноута
+
+  assist:
+    build: ./services/voice_assistant
+    ports:
+      - "8001:8001"
+    volumes:
+      - /dev/snd:/dev/snd
+    devices:
+      - /dev/snd
+    privileged: true
+    depends_on:
+      - whisper
+      - piper
+      - openwakeword
+    environment:
+      - MQTT_BROKER=10.0.0.1
+      - HA_URL=http://10.0.0.1:8123
+    restart: unless-stopped
+
+  # frigate - только если есть Coral или Hailo
+  # frigate:
+  #   image: ghcr.io/blakeblackshear/frigate:stable
+  #   privileged: true
+  #   volumes:
+  #     - ./frigate/config.yml:/config/config.yml
+  #     - ./frigate/media:/media/frigate
+  #   ports:
+  #     - "5000:5000"

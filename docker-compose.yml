@@ -1,0 +1,65 @@
+version: '3.8'
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+    restart: unless-stopped
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    volumes:
+      - ./ha_config:/config
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "8123:8123"
+    privileged: true
+    restart: unless-stopped
+
+  influxdb:
+    image: influxdb:2.7
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb:/var/lib/influxdb2
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    restart: unless-stopped
+    depends_on:
+      - influxdb
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0" # R503
+      - "/dev/ttyAMA0:/dev/ttyAMA0" # radar
+
+  # whisper:
+  #   image: rhasspy/wyoming-whisper:latest
+  #   ports:
+  #     - "10300:10300"
+  #   command: --model small --language ru
+
+  # piper:
+  #   image: rhasspy/wyoming-piper:latest
+  #   ports:
+  #     - "10200:10200"
+  #   command: --voice ru_RU-irina-medium
