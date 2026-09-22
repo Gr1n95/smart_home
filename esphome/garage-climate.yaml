@@ -1,0 +1,186 @@
+# ESPHome - Узел Климат + Газ (Гараж)
+# Плата: ESP32 DevKit V1
+# Датчики: BME280 (T/H/P) + MQ-7 (CO) + MQ-135 (Air Quality)
+# MQTT: шлет на Pi4 10.0.0.1
+# Установка: esphome run garage-climate.yaml --device /dev/ttyUSB0
+
+esphome:
+  name: garage-climate
+  friendly_name: Garage Climate
+  platform: ESP32
+  board: esp32dev
+
+# WiFi - для начала домашний, потом GarageNet
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # Статика для гаража
+  manual_ip:
+    static_ip: 192.168.4.20
+    gateway: 192.168.4.1
+    subnet: 255.255.255.0
+    dns1: 192.168.4.1
+  # Fallback AP если WiFi упал
+  ap:
+    ssid: "Garage-Climate Fallback"
+    password: "garage1234"
+
+captive_portal:
+
+logger:
+  level: DEBUG
+
+api:
+  encryption:
+    key: "your_api_key_generate_with_esphome"
+
+ota:
+  password: "ota_password_garage"
+
+# MQTT - главный транспорт, на Pi4 10.0.0.1
+mqtt:
+  broker: 10.0.0.1
+  port: 1883
+  username: garage
+  password: garage2026
+  # Топики как в архитектуре
+  discovery: false
+  topic_prefix: garage/climate
+
+# I2C для BME280
+i2c:
+  sda: 21
+  scl: 22
+  scan: true
+  id: bus_a
+
+sensor:
+  - platform: bme280
+    i2c_id: bus_a
+    address: 0x76
+    temperature:
+      name: "Garage Temperature"
+      id: garage_temp
+      state_topic: garage/climate/temp
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 10
+            send_every: 3
+      on_value_range:
+        - below: 3.0
+          then:
+            - mqtt.publish:
+                topic: garage/alarm
+                payload: '{"type":"LOW_TEMP","value":{{value}}}'
+    pressure:
+      name: "Garage Pressure"
+      id: garage_pressure
+      state_topic: garage/climate/pressure
+    humidity:
+      name: "Garage Humidity"
+      id: garage_humidity
+      state_topic: garage/climate/humidity
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 10
+            send_every: 3
+      on_value_range:
+        - above: 75.0
+          then:
+            - mqtt.publish:
+                topic: garage/alarm
+                payload: '{"type":"HIGH_HUMIDITY","value":{{value}}}'
+    update_interval: 10s
+
+  # MQ-7 CO - главный датчик безопасности
+  # Подключение: VCC 5V, GND, A0 -> GPIO34 (ADC)
+  # Важно: прогрев 48 часов!
+  - platform: adc
+    pin: 34
+    name: "Garage MQ7 Raw"
+    id: mq7_raw
+    update_interval: 5s
+    attenuation: 11db
+    filters:
+      - sliding_window_moving_average:
+          window_size: 20
+          send_every: 4
+    on_value:
+      then:
+        - lambda: |-
+            // Калибровка MQ-7 для CO
+            // Ro - сопротивление на чистом воздухе, надо замерить после 48ч прогрева
+            // Пример: Ro = 10kOm, Rs = (5V - Vout)*RL / Vout
+            // Формула из даташита: ppm = 100 * (Rs/Ro)^-1.5
+            // Упрощенная версия - калибруйте под свой модуль!
+            float vout = id(mq7_raw).state;
+            float vcc = 5.0;
+            float rl = 10.0; // 10kOm на модуле
+            float rs = (vcc - vout) * rl / vout;
+            float ro = 10.0; // <-- ЗАМЕНИТЕ после калибровки! Замерьте на чистом воздухе
+            float ratio = rs / ro;
+            float ppm = 100.0 * pow(ratio, -1.5);
+            if (ppm < 0) ppm = 0;
+            if (ppm > 1000) ppm = 1000;
+            id(garage_co_ppm).publish_state(ppm);
+            
+            // Тревога
+            if (ppm > 50) {
+              id(mqtt_client).publish("garage/gas/co", to_string(ppm));
+              id(mqtt_client).publish("garage/alarm", "{\"type\":\"CO\",\"value\":" + to_string(ppm) + "}");
+            }
+
+  - platform: template
+    name: "Garage CO ppm"
+    id: garage_co_ppm
+    unit_of_measurement: "ppm"
+    accuracy_decimals: 1
+    state_topic: garage/gas/co
+    icon: "mdi:molecule-co"
+
+  # MQ-135 - качество воздуха
+  - platform: adc
+    pin: 35
+    name: "Garage MQ135 Raw"
+    id: mq135_raw
+    update_interval: 10s
+    attenuation: 11db
+    filters:
+      - sliding_window_moving_average:
+          window_size: 20
+          send_every: 4
+    on_value:
+      then:
+        - lambda: |-
+            float vout = id(mq135_raw).state;
+            // Упрощенная оценка качества 0-100%
+            float quality = (vout / 3.3) * 100.0;
+            id(garage_air_quality).publish_state(quality);
+
+  - platform: template
+    name: "Garage Air Quality"
+    id: garage_air_quality
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    state_topic: garage/gas/air_quality
+
+  # WiFi сигнал
+  - platform: wifi_signal
+    name: "Garage Climate WiFi Signal"
+    update_interval: 30s
+
+# Для связи с Pi4
+mqtt:
+  id: mqtt_client
+
+# Кнопка для калибровки Ro на чистом воздухе
+button:
+  - platform: template
+    name: "Calibrate MQ7 Ro"
+    on_press:
+      - lambda: |-
+          ESP_LOGI("mq7", "Calibrating Ro on clean air... Current raw: %f", id(mq7_raw).state);
+          // Логика калибровки - сохранить Ro в flash
+          // Ro = Rs на чистом воздухе
