@@ -20,7 +20,9 @@
 10. [**08_DIPLOMA_TODO.md**](./docs/08_DIPLOMA_TODO.md) — что осталось для диплома, сценарий защиты
 11. [`services/astra/astra_core.py`](./services/astra/astra_core.py) — ядро Astra, интент-парсер, MQTT, TTS
 12. [`services/face/coral_face_detector.py`](./services/face/coral_face_detector.py) — FaceID на Coral + InsightFace
-13. [`frigate/config.yml`](./frigate/config.yml) — Frigate для Pi5 + Coral pci:0
+13. [`services/simulators/garage_simulator.py`](./services/simulators/garage_simulator.py) — **симулятор узлов для макета** (те же MQTT-топики, сценарии gas_leak/person/night)
+14. [**12_DEMO_STAND.md**](./docs/12_DEMO_STAND.md) — **макет для диплома: что реальное/что имитируем, демо-сценарий на 5 мин**
+15. [`frigate/config.yml`](./frigate/config.yml) — Frigate для Pi5 + Coral pci:0
 
 ## 🚀 Быстрый старт
 

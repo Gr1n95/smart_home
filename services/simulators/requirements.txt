@@ -1,0 +1,3 @@
+# Зависимости симулятора стенда
+# pip install -r requirements.txt
+paho-mqtt>=1.6,<3
