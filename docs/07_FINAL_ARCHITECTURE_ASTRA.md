@@ -46,6 +46,9 @@
 │     BlazeFace Coral (pci:0) 25ms -> crop -> InsightFace buffalo_s CPU   │
 │     150ms -> garage/access/face/result {name, score} -> MQTT к Pi4      │
 │  - fingerprint_service: R503 -> garage/access/finger/result             │
+│  - nfc_service: RC522 UID -> garage/access/nfc/result {uid, valid}      │
+│  - pin_entry: клавиатура 4x4 -> garage/access/pin/result {ok, user}     │
+│    (решение МФА принимает Pi4: policy engine по режиму охраны)          │
 │  - radar_service: LD2450 -> garage/security/radar {count, x,y}          │
 │  - voice_recognition:                                                   │
 │     openWakeWord ("Астра") -> faster-whisper small ru -> текст          │
@@ -79,6 +82,8 @@
 1.  Радар LD2450 на Pi5 видит человека -> включает ИК подсветку
 2.  Pi5: Coral BlazeFace -> лицо -> InsightFace embedding -> сравнение -> `garage/access/face/result {"name":"Ivan","score":0.78}`
 3.  Pi5: R503 палец -> `garage/access/finger/result {"id":1}`
+4.  ESP32: NFC RC522 -> `garage/access/nfc/result {"uid":"04:A2:...","valid":true}`, PIN 4x4 -> `garage/access/pin/result {"ok":true,"user":"Ivan"}`
+5.  Pi4 policy engine МФА: стандарт = лицо ИЛИ палец; усиленный = биометрия И (NFC ИЛИ PIN); деградация = NFC И PIN -> `garage/access/granted` -> замок
 4.  Pi4: получает оба, проверяет (лицо AND палец) -> `garage/actuator/lock OPEN` -> реле замка
 5.  Pi4: Astra говорит: "Добро пожаловать, Иван"
 
@@ -129,7 +134,7 @@ Wake word: обучить модель "Астра" для openWakeWord. Ест�
   2.2 Выбор Pi4/Pi5, ESP32, датчиков (BME280 vs DHT22)
   2.3 Coral M.2 TPU — твой гайд, почему M.2 а не USB
   2.4 Радар LD2450 vs PIR
-  2.5 СКУД: Камера (обычная) + R503 + замок
+  2.5 СКУД (МФА): NFC-метка + PIN-код + лицо/отпечаток + замок, политика факторов по режимам охраны
   2.6 Схема подключения, питание 12В, UPS, RTC
 Глава 3 — Программная часть Pi4 (Сервер + Astra)
   3.1 Архитектура MQTT, HA, Influx, Grafana

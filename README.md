@@ -63,7 +63,7 @@ docker-compose up -d mosquitto influxdb grafana
 ```
 Датчики (ESP32) --MQTT--> Raspberry Pi 5 --реле--> Обогреватель/Вентилятор/Свет
 Радар LD2450 --> трекинг людей
-Камера + R503 --> FaceID + Fingerprint --> Замок
+Камера + R503 + NFC + PIN --> МФА СКУД --> Замок
 USB-микрофон --> Whisper + Piper --> Локальная Алиса
 ```
 
