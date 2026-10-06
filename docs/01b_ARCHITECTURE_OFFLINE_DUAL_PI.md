@@ -46,7 +46,7 @@
 ┌───────────────────────▼──────────────────────────────────────────────┐
 │  Pi5 - AI BRAIN (192.168.4.1) - ТЯЖЕЛЫЙ, МОЖНО ПЕРЕЗАГРУЖАТЬ          │
 │  Роль: Глаза и уши                                                   │
-│  Железо: PiCam3 NoIR + ИК прожектор, R503, LD2450, ReSpeaker 2-Mics, │
+│  Железо: камера обычная, R503, LD2450, USB-микрофон,                 │
 │          опционально Hailo-8L AI HAT (27 TOPS) или Coral USB         │
 │  Софт (тяжелый, bursty):                                             │
 │   - face_service (InsightFace buffalo_s, 320x320 для скорости)       │
@@ -98,7 +98,7 @@
 
 **Пайплайн:**
 ```
-ReSpeaker (ALSA) -> VAD Silero (отсекает тишину) -> openWakeWord ("привет гараж" - надо обучить)
+USB-микрофон (ALSA) -> VAD Silero (отсекает тишину) -> openWakeWord ("привет гараж" - надо обучить)
 -> запись 5 сек -> faster-whisper small ru (модель 150MB, скачать заранее) -> текст
 -> HA Assist: "включи свет" -> intent -> MQTT garage/actuator/light ON
 -> если не понял: Ollama phi3:mini (3.8B) -> "что такое угарный газ?" -> ответ

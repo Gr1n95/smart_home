@@ -100,7 +100,7 @@ mosquitto_pub -h 10.0.0.1 -t garage/test -m "Pi5 online"
 **Шаг 3.1 — Coral + Frigate (1 день):**
 - На Pi5 `docker compose -f docker-compose.pi5.yml up -d frigate`
 - Frigate config уже в `frigate/config.yml` с `detector: coral pci:0`
-- PiCam3 NoIR -> Frigate -> детекция person 12ms
+- Камера (обычная USB webcam) -> Frigate -> детекция person 12ms
 - MQTT `garage/security/person` -> Pi4
 
 **Шаг 3.2 — FaceID с Coral (3-4 дня):**
@@ -126,7 +126,7 @@ mosquitto_pub -h 10.0.0.1 -t garage/test -m "Pi5 online"
 **Шаг 4.1 — STT на Pi5 (тяжелое):**
 - На Pi5: `docker compose -f docker-compose.pi5.yml up -d whisper openwakeword`
 - Whisper small ru — скачать модель заранее (150MB)
-- ReSpeaker 2-Mics -> openWakeWord "Астра" (пока hey_jarvis) -> Whisper -> текст
+- USB-микрофон -> openWakeWord "Астра" (пока hey_jarvis) -> Whisper -> текст
 - Тест: говоришь "привет" -> в логах текст
 
 **Шаг 4.2 — Astra Core на Pi4 (логика):**
@@ -180,7 +180,7 @@ mosquitto_pub -h 10.0.0.1 -t garage/test -m "Pi5 online"
 - Coral M.2 уже на Pi5 стоит и работает?
 - ESP32 есть? Сколько штук?
 - Датчики: BME280, MQ-7, BH1750, R503, LD2450, реле — что уже купил?
-- PiCam есть? ReSpeaker?
+- Камера есть? USB-микрофон есть?
 
 От этого зависит, с какой фазы стартуем. Если все есть — стартуем с Фазы 1 сегодня.
 

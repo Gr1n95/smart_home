@@ -15,7 +15,7 @@
 ┌─────────────────────────────────────────────────────────────────────────┐
 │ Pi4 — SERVER + ASTRA BRAIN (192.168.4.1 / 10.0.0.1) — ГЛАВНЫЙ ДЛЯ ДИПЛОМА│
 │ Роль: Мозг, сервер, голос Astra                                         │
-│ Железо: DS3231 RTC, UPS HAT, SSD 256GB, ReSpeaker? Нет, mic на Pi5      │
+│ Железо: DS3231 RTC, UPS HAT, SSD 256GB, USB-микрофон на Pi5             │
 │         Реле 4ch, сирена, Ethernet, WiFi AP                             │
 │ Софт (критичный, дипломный):                                            │
 │  - Mosquitto MQTT (главный брокер)                                      │
@@ -39,8 +39,8 @@
 ┌──────────────────────────────▼──────────────────────────────────────────┐
 │ Pi5 — PERCEPTION NODE + CORAL (10.0.0.2 / 192.168.4.2) — СОПРОЦЕССОР     │
 │ Роль: Глаза и уши, тяжелое распознавание                                │
-│ Железо: Coral M.2 TPU (/dev/apex_0) — твой гайд, PiCam3 NoIR + ИК,      │
-│         R503 fingerprint, LD2450 radar, ReSpeaker 2-Mics (микрофоны)     │
+│ Железо: Coral M.2 TPU (/dev/apex_0) — твой гайд, камера обычная,        │
+│         R503 fingerprint, LD2450 radar, USB-микрофон                     │
 │ Софт (тяжелый):                                                         │
 │  - face_service:                                                        │
 │     BlazeFace Coral (pci:0) 25ms -> crop -> InsightFace buffalo_s CPU   │
@@ -64,7 +64,7 @@
 ## Поток данных Astra (пример)
 
 1.  Человек в гараже говорит: **"Астра, включи свет"**
-2.  Pi5: ReSpeaker -> VAD -> openWakeWord детектит "Астра" (модель hey_jarvis переобучена на Astra)
+2.  Pi5: USB-микрофон -> VAD -> openWakeWord детектит "Астра" (модель hey_jarvis переобучена на Astra)
 3.  Pi5: запись 4 сек -> faster-whisper small ru (1.2 сек на Pi5 CPU) -> текст "включи свет"
 4.  Pi5: MQTT `astra/stt/text` -> `{"text":"включи свет","ts":...}` -> Pi4
 5.  Pi4: Astra Core получает текст
@@ -129,7 +129,7 @@ Wake word: обучить модель "Астра" для openWakeWord. Ест�
   2.2 Выбор Pi4/Pi5, ESP32, датчиков (BME280 vs DHT22)
   2.3 Coral M.2 TPU — твой гайд, почему M.2 а не USB
   2.4 Радар LD2450 vs PIR
-  2.5 СКУД: PiCam NoIR + R503 + замок
+  2.5 СКУД: Камера (обычная) + R503 + замок
   2.6 Схема подключения, питание 12В, UPS, RTC
 Глава 3 — Программная часть Pi4 (Сервер + Astra)
   3.1 Архитектура MQTT, HA, Influx, Grafana

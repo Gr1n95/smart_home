@@ -135,7 +135,7 @@ elif temp < 5:
 Архитектура офлайн:
 
 ```
-[ReSpeaker] -> VAD (silero) -> Whisper small ru -> Text
+[USB-микрофон] -> VAD (silero) -> Whisper small ru -> Text
 Text -> Intent (HA Assist) -> Action -> TTS Piper -> Speaker
         |
         -> LLM (Ollama) для болталки: "а что такое CO?"

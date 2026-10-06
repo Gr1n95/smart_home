@@ -5,7 +5,7 @@
 ## Архитектура Astra
 
 ```
-[Pi5] ReSpeaker -> openWakeWord ("Астра") -> Whisper small ru -> MQTT astra/stt/text
+[Pi5] USB-микрофон -> openWakeWord ("Астра") -> Whisper small ru -> MQTT astra/stt/text
                                                                             |
 [Pi4] Astra Core -----------------------------------------------------------+
   |-> Intent Parser (HA intents)

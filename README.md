@@ -4,7 +4,7 @@
 
 **Финальная структура для диплома:**
 - **Pi4 — SERVER + ASTRA BRAIN** (192.168.4.1): Mosquitto, HA, Influx, Grafana, Astra Core (Piper TTS + Ollama), ESP control, GarageNet AP
-- **Pi5 — PERCEPTION NODE + CORAL** (10.0.0.2): FaceID (BlazeFace Coral + InsightFace), Voice STT (Whisper), Radar LD2450, R503, PiCam NoIR, Frigate
+- **Pi5 — PERCEPTION NODE + CORAL** (10.0.0.2): FaceID (BlazeFace Coral + InsightFace), Voice STT (Whisper), Radar LD2450, R503, камера (обычная/USB), Frigate
 
 ## 📚 Документация
 
@@ -63,8 +63,8 @@ docker-compose up -d mosquitto influxdb grafana
 ```
 Датчики (ESP32) --MQTT--> Raspberry Pi 5 --реле--> Обогреватель/Вентилятор/Свет
 Радар LD2450 --> трекинг людей
-PiCam NoIR + R503 --> FaceID + Fingerprint --> Замок
-ReSpeaker --> Whisper + Piper --> Локальная Алиса
+Камера + R503 --> FaceID + Fingerprint --> Замок
+USB-микрофон --> Whisper + Piper --> Локальная Алиса
 ```
 
 ## 🔒 Безопасность
