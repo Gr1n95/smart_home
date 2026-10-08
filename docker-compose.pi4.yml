@@ -57,6 +57,16 @@ services:
     # Тут логика: газ, климат, реле, сирена
     # GPIO для реле и сирены
 
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama:/root/.ollama
+    restart: unless-stopped
+    # На CPU (Pi4) phi3:mini ~2.3GB RAM, медленно но работает офлайн
+    # Ставить только если у Pi4 >= 4GB RAM (см. docs/13_PI4_INSTALL.md)
+
   # hostapd и dnsmasq лучше ставить на хост, а не в докере
   # Но можно и так:
   # wifi-ap:
