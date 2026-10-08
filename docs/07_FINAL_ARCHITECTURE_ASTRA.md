@@ -141,6 +141,7 @@ Wake word: обучить модель "Астра" для openWakeWord. Ест�
   3.1 Архитектура MQTT, HA, InfluxDB (история), регулятор (подсистема автоматического управления)
   3.2 Регулятор климата/газа (алгоритм, PID, гистерезис)
   3.3 Astra Core: STT->Intent->TTS, Piper, Ollama, Wake Word
+  3.4 Watcher: обнаружение резких изменений (первая производная), проактивное информирование
   3.4 WiFi AP GarageNet, офлайн работа
 Глава 4 — Программная часть Pi5 (Perception + Coral)
   4.1 FaceID: BlazeFace Coral + InsightFace

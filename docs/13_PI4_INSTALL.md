@@ -139,6 +139,8 @@ WantedBy=multi-user.target
 ```
 
 ```ini
+# /etc/systemd/system/astra-watcher.service — резкие изменения -> голос
+#   ExecStart=... python services/astra/watcher.py
 # /etc/systemd/system/astra-tts.service  — голос (Piper)
 [Unit]
 Description=Astra TTS (Piper)
@@ -157,7 +159,7 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now astra-core astra-tts
+sudo systemctl enable --now astra-core astra-tts astra-watcher
 ```
 
 Проверка голоса, не дожидаясь Pi5:
