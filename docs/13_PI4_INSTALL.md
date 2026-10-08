@@ -1,8 +1,24 @@
 # Установка Pi4 (сервер + Astra) — по полочкам
 
-> Pi4 = **весь сервер и мозг**: MQTT, БД истории, HA, регулятор (автоматика), Astra
+> Pi4 = **весь сервер и мозг**: MQTT, БД истории, регулятор (автоматика), Astra
 > (интенты + LLM + TTS), GPIO реле/сирены, точка доступа GarageNet.
 > Устанавливаем послойно, каждый слой проверяем — не идём дальше, пока слой не зелёный.
+
+## Минимальный состав под три задачи
+
+| Задача | Что ставим | Как |
+|---|---|---|
+| **Шина для микроконтроллеров** | Mosquitto (MQTT-брокер) | Docker |
+| **База данных** | InfluxDB 2.7 + логгер MQTT→Influx | Docker + systemd |
+| **Автоматика (рефлексы)** | Регулятор | systemd (python) |
+| **Голосовой ассистент** | Astra Core + Watcher + TTS (Piper irina-medium) | systemd (python, venv) |
+| **LLM fallback Astra** | Ollama phi3:mini | Docker, только если RAM ≥ 4GB |
+| **НЕ ставим** | Grafana (решено), Home Assistant (для трёх задач не нужен) | вернуть можно одной строкой compose |
+
+Управление микроконтроллерами устроено так: **ESP32 прошиваются один раз с ноутбука**
+(ESPHome, папка `esphome/`), дальше живут сами и слушают MQTT. Pi4 не «дёргает» их
+напрямую — он публикует команды `garage/actuator/#` в брокер, ESP исполняют.
+Собственная GPIO Pi4 — для сирены и замка (ближе к серверу).
 
 ---
 
@@ -63,19 +79,21 @@ bash scripts/pi4/01-install-docker-mosquitto.sh
 **Grafana убран** (решение: без визуализации, вся история в InfluxDB — блок закомментирован в compose). Регулятор и логгер — systemd-сервисы на хосте (Полка 4б), не контейнеры: регулятору нужен GPIO.
 
 ```bash
-docker compose -f docker-compose.pi4.yml up -d mosquitto influxdb homeassistant ollama
+docker compose -f docker-compose.pi4.yml up -d mosquitto influxdb
+# ollama добавить если RAM >= 4GB: ... up -d mosquitto influxdb ollama
+# homeassistant — по желанию, для трёх задач не нужен
 ```
 
 Первичная настройка (по одному разу):
 - **InfluxDB**: http://pi4:8086 → Get Started → user/org → bucket `garage` → **сохранить token** (нужен логгеру)
 - **Ollama** (если запущен): `docker exec -it smart_home-ollama-1 ollama pull phi3:mini`
-- **HA**: http://pi4:8123 → интеграция MQTT → broker `10.0.0.1`, user `garage`
+- **HA** (если запускал): http://pi4:8123 → интеграция MQTT → broker `10.0.0.1`, user `garage`
 
 ### Сколько RAM у Pi4 — что включать
 
 | RAM | Стек | Astra |
 |---|---|---|
-| 2GB | mosquitto + influx + регулятор + логгер (~450MB) | интенты + TTS, **без** LLM |
+| 2GB | mosquitto + influx + регулятор + логгер (~450MB) | интенты + TTS, **без** LLM — этого достаточно для всех трёх задач |
 | 4GB | всё выше + HA + Ollama (~3.3GB, добавить swap 1GB) | полный, LLM впритык |
 | 8GB | всё без ограничений | полный |
 
