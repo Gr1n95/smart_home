@@ -30,7 +30,7 @@
 ### 3. Pi4 Server
 - [ ] hostapd GarageNet + dnsmasq
 - [ ] DS3231 RTC на оба Pi
-- [ ] Mosquitto + HA + Influx + Grafana
+- [ ] Mosquitto + HA + InfluxDB (история) + регулятор (без Grafana — решено)
 - [ ] Регулятор: газ >50ppm -> вытяжка + сирена (код в backend/app/main.py уже есть)
 
 ### 4. Дипломный текст

@@ -19,7 +19,8 @@
 │         Реле 4ch, сирена, Ethernet, WiFi AP                             │
 │ Софт (критичный, дипломный):                                            │
 │  - Mosquitto MQTT (главный брокер)                                      │
-│  - Home Assistant + InfluxDB + Grafana                                  │
+│  - Home Assistant + InfluxDB (история; Grafana опционально)             │
+│  - Регулятор: автоматика климата/газа/света (гистерезис, рефлексы)      │
 │  - FastAPI Backend (регулятор климата/газа/света)                       │
 │  - Astra Core:                                                          │
 │     * Dialogue Manager (python)                                         │
@@ -137,7 +138,7 @@ Wake word: обучить модель "Астра" для openWakeWord. Ест�
   2.5 СКУД (МФА): NFC-метка + PIN-код + лицо/отпечаток + замок, политика факторов по режимам охраны
   2.6 Схема подключения, питание 12В, UPS, RTC
 Глава 3 — Программная часть Pi4 (Сервер + Astra)
-  3.1 Архитектура MQTT, HA, Influx, Grafana
+  3.1 Архитектура MQTT, HA, InfluxDB (история), регулятор (подсистема автоматического управления)
   3.2 Регулятор климата/газа (алгоритм, PID, гистерезис)
   3.3 Astra Core: STT->Intent->TTS, Piper, Ollama, Wake Word
   3.4 WiFi AP GarageNet, офлайн работа
@@ -163,8 +164,7 @@ services:
   mosquitto: ...
   homeassistant: ...
   influxdb: ...
-  grafana: ...
-  regulator: # газ/климат
+  regulator: # автоматика газ/климат/свет (services/regulator/regulator.py)
   astra_core:
     build: ./services/astra
     ports: ["8001:8001"]

@@ -1,6 +1,6 @@
 # Установка Pi4 (сервер + Astra) — по полочкам
 
-> Pi4 = **весь сервер и мозг**: MQTT, БД, графики, HA, регулятор, Astra
+> Pi4 = **весь сервер и мозг**: MQTT, БД истории, HA, регулятор (автоматика), Astra
 > (интенты + LLM + TTS), GPIO реле/сирены, точка доступа GarageNet.
 > Устанавливаем послойно, каждый слой проверяем — не идём дальше, пока слой не зелёный.
 
@@ -56,19 +56,18 @@ bash scripts/pi4/01-install-docker-mosquitto.sh
 | Контейнер | Порт | RAM | Что даёт |
 |---|---|---|---|
 | mosquitto | 1883, 9001 | ~30MB | Шина всего проекта |
-| influxdb:2.7 | 8086 | ~200MB | БД телеметрии, bucket `garage` |
-| grafana | 3000 | ~150MB | Графики (демо на защите) |
+| influxdb:2.7 | 8086 | ~200MB | БД истории телеметрии, bucket `garage` |
 | homeassistant | 8123 | ~500-700MB | Панель управления (опционален) |
-| regulator (backend) | 8000 | ~80MB | Регулятор климата/газа, GPIO |
 | ollama | 11434 | ~2.3GB с phi3:mini | LLM fallback Astra — **только если RAM >= 4GB** |
 
+**Grafana убран** (решение: без визуализации, вся история в InfluxDB — блок закомментирован в compose). Регулятор и логгер — systemd-сервисы на хосте (Полка 4б), не контейнеры: регулятору нужен GPIO.
+
 ```bash
-docker compose -f docker-compose.pi4.yml up -d
+docker compose -f docker-compose.pi4.yml up -d mosquitto influxdb homeassistant ollama
 ```
 
 Первичная настройка (по одному разу):
-- **InfluxDB**: http://pi4:8086 → Get Started → user/org → bucket `garage` → сохранить token
-- **Grafana**: http://pi4:3000 (admin/admin) → datasource InfluxDB (Flux, token) → dashboard «Garage»
+- **InfluxDB**: http://pi4:8086 → Get Started → user/org → bucket `garage` → **сохранить token** (нужен логгеру)
 - **Ollama** (если запущен): `docker exec -it smart_home-ollama-1 ollama pull phi3:mini`
 - **HA**: http://pi4:8123 → интеграция MQTT → broker `10.0.0.1`, user `garage`
 
@@ -76,9 +75,30 @@ docker compose -f docker-compose.pi4.yml up -d
 
 | RAM | Стек | Astra |
 |---|---|---|
-| 2GB | mosquitto + influx + grafana + regulator (~500MB) | интенты + TTS, **без** LLM |
-| 4GB | всё выше + HA + Ollama (~3.5GB, добавить swap 1GB) | полный, LLM впритык |
+| 2GB | mosquitto + influx + регулятор + логгер (~450MB) | интенты + TTS, **без** LLM |
+| 4GB | всё выше + HA + Ollama (~3.3GB, добавить swap 1GB) | полный, LLM впритык |
 | 8GB | всё без ограничений | полный |
+
+### Полка 4б — Регулятор + логгер (systemd)
+
+```bash
+cd ~/smart_home && source venv/bin/activate
+pip install influxdb-client   # для логгера
+```
+
+Юнит `/etc/systemd/system/garage-regulator.service` (шаблон как у astra-core):
+`ExecStart=/home/pi/smart_home/venv/bin/python services/regulator/regulator.py`
+
+Юнит `/etc/systemd/system/influx-logger.service` (то же + Environment с INFLUX_TOKEN из Полки 3):
+`ExecStart=... python services/influx_logger/influx_logger.py`
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now garage-regulator influx-logger
+```
+
+Проверка автоматики без железа: запусти симулятор `scenario cold` с ноутбука —
+в логе MQTT регулятор сам опубликует `garage/actuator/heater ON`.
 
 ---
 
@@ -167,7 +187,8 @@ docker save $(docker images --format '{{.Repository}}:{{.Tag}}' | grep -v '<none
 
 - [ ] `docker ps` — 5-6 контейнеров Up
 - [ ] `mosquitto_sub -t 'garage/#' -v` — видит сообщения симулятора с Pi5
-- [ ] http://pi4:3000 — график температуры/CO рисуется
+- [ ] Сценарий `cold` симулятора → регулятор сам публикует `garage/actuator/heater ON`
+- [ ] InfluxDB: запись истории идёт (логгер active, запрос bucket в UI :8086 возвращает точки)
 - [ ] http://pi4:8123 — HA видит MQTT
 - [ ] `systemctl status astra-core astra-tts` — active (running)
 - [ ] `mosquitto_pub -t astra/tts/say -m "Тест"` — говорит голосом

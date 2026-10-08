@@ -59,21 +59,27 @@ bash scripts/pi5/02-test-mqtt.sh
     # garage/climate/temp 22.5
     ```
 
-## Шаг 4: Grafana (10 мин)
+## Шаг 4: InfluxDB + регулятор (10 мин)
 
 ```bash
 # На Pi4
-docker compose -f docker-compose.pi4.yml up -d influxdb grafana
-# Открыть http://10.0.0.1:3000 (или http://192.168.4.1:3000 если AP поднят)
-# admin/admin
-# Add datasource InfluxDB, bucket garage
+docker compose -f docker-compose.pi4.yml up -d influxdb
+# InfluxDB UI: http://10.0.0.1:8086 -> Get Started -> bucket garage -> сохранить TOKEN
+
+# Регулятор (автоматика) - тест:
+python3 services/regulator/regulator.py   # или systemd unit, см. docs/13
+# В другом терминале смотреть реакции:
+mosquitto_sub -t 'garage/#' -v
+# Если ESP32 шлёт T < 3C (или сценарий cold симулятора) -> увидишь
+# garage/actuator/heater ON - система сама реагирует
 ```
 
 ## Итого за вечер
 
 - Pi4 Mosquitto работает
 - Pi5 видит Pi4 по Ethernet и Coral работает
-- ESP32 шлет температуру в Grafana
+- ESP32 шлет температуру, регулятор сам включает «обогрев»
+- История пишется в InfluxDB
 - Скелет готов — Фаза 1 done
 
 ## Дальше — Фаза 2: газ и отпечаток

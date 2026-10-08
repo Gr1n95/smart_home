@@ -8,8 +8,8 @@
 ## Неделя 1: Ядро
 Цель: Pi + MQTT + первый датчик
 - [ ] Установить Raspberry Pi OS Lite 64-bit, Docker, Mosquitto, Home Assistant Container
-- [ ] Поднять `docker-compose.yml` (mosquitto, influxdb, grafana)
-- [ ] Прошить ESP32 с BME280, подключить к MQTT, увидеть графики в Grafana
+- [ ] Поднять `docker-compose.pi4.yml` (mosquitto, influxdb) + регулятор
+- [ ] Прошить ESP32 с BME280, подключить к MQTT, проверить реакцию регулятора
 - [ ] Сделать Telegram бота который шлет температуру каждый час
 
 Результат: ты уже видишь климат гаража с телефона.

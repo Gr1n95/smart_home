@@ -3,7 +3,7 @@
 > Контроль климата, газа, света, трекинг радаром, СКУД по лицу и отпечатку, голосовой ассистент **Astra**. Полностью офлайн, 2x Pi, Coral M.2 TPU.
 
 **Финальная структура для диплома:**
-- **Pi4 — SERVER + ASTRA BRAIN** (192.168.4.1): Mosquitto, HA, Influx, Grafana, Astra Core (Piper TTS + Ollama), ESP control, GarageNet AP
+- **Pi4 — SERVER + ASTRA BRAIN** (192.168.4.1): Mosquitto, HA, InfluxDB (история), регулятор (автоматика), Astra Core (Piper TTS + Ollama), ESP control, GarageNet AP
 - **Pi5 — PERCEPTION NODE + CORAL** (10.0.0.2): FaceID (BlazeFace Coral + InsightFace), Voice STT (Whisper), Radar LD2450, R503, камера (обычная/USB), Frigate
 
 ## 📚 Документация
@@ -18,12 +18,14 @@
 8.  [**04_IMPLEMENTATION_ROADMAP.md**](./docs/04_IMPLEMENTATION_ROADMAP.md) — план на 8 недель
 9.  [**05_OFFLINE_SETUP.md**](./docs/05_OFFLINE_SETUP.md) — офлайн настройка, hostapd, RTC, модели
 10. [**08_DIPLOMA_TODO.md**](./docs/08_DIPLOMA_TODO.md) — что осталось для диплома, сценарий защиты
-11. [`services/astra/astra_core.py`](./services/astra/astra_core.py) — ядро Astra, интент-парсер, MQTT, TTS
-12. [`services/face/coral_face_detector.py`](./services/face/coral_face_detector.py) — FaceID на Coral + InsightFace
-13. [`services/simulators/garage_simulator.py`](./services/simulators/garage_simulator.py) — **симулятор узлов для макета** (те же MQTT-топики, сценарии gas_leak/person/night)
-14. [**12_DEMO_STAND.md**](./docs/12_DEMO_STAND.md) — **макет для диплома: что реальное/что имитируем, демо-сценарий на 5 мин**
-15. [**13_PI4_INSTALL.md**](./docs/13_PI4_INSTALL.md) — **установка Pi4 по полочкам: ОС→сеть→Docker→стек→Astra, RAM-таблица**
-16. [`frigate/config.yml`](./frigate/config.yml) — Frigate для Pi5 + Coral pci:0
+11. [`services/regulator/regulator.py`](./services/regulator/regulator.py) — **регулятор: автоматика климата/газа/света (гистерезис, ручной приоритет)**
+12. [`services/influx_logger/influx_logger.py`](./services/influx_logger/influx_logger.py) — история MQTT → InfluxDB
+13. [`services/astra/astra_core.py`](./services/astra/astra_core.py) — ядро Astra, интент-парсер, MQTT, TTS
+14. [`services/face/coral_face_detector.py`](./services/face/coral_face_detector.py) — FaceID на Coral + InsightFace
+15. [`services/simulators/garage_simulator.py`](./services/simulators/garage_simulator.py) — **симулятор узлов для макета** (те же MQTT-топики, сценарии gas_leak/person/night)
+16. [**12_DEMO_STAND.md**](./docs/12_DEMO_STAND.md) — **макет для диплома: что реальное/что имитируем, демо-сценарий на 5 мин**
+17. [**13_PI4_INSTALL.md**](./docs/13_PI4_INSTALL.md) — **установка Pi4 по полочкам: ОС→сеть→Docker→стек→Astra, RAM-таблица**
+18. [`frigate/config.yml`](./frigate/config.yml) — Frigate для Pi5 + Coral pci:0
 
 ## 🚀 Быстрый старт
 
@@ -55,9 +57,9 @@ docker compose -f docker-compose.pi5.yml up -d
 # На Raspberry Pi 5
 git clone <repo>
 cd smart_home
-docker-compose up -d mosquitto influxdb grafana
+docker-compose up -d mosquitto influxdb
 # Прошить ESP32 через ESPHome, подключить BME280
-# Открыть http://pi-ip:3000 — графики
+# Проверка данных: mosquitto_sub -t 'garage/#' -v или запрос к InfluxDB http://pi-ip:8086
 # Открыть http://pi-ip:8000/docs — API
 ```
 

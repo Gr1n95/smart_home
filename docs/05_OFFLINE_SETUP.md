@@ -9,12 +9,11 @@
 docker pull eclipse-mosquitto:2
 docker pull ghcr.io/home-assistant/home-assistant:stable
 docker pull influxdb:2.7
-docker pull grafana/grafana
 docker pull rhasspy/wyoming-whisper
 docker pull rhasspy/wyoming-piper
 docker pull rhasspy/wyoming-openwakeword
 docker pull ollama/ollama
-docker save -o offline-images.tar eclipse-mosquitto:2 ghcr.io/home-assistant/home-assistant:stable influxdb:2.7 grafana/grafana rhasspy/wyoming-whisper rhasspy/wyoming-piper rhasspy/wyoming-openwakeword ollama/ollama
+docker save -o offline-images.tar eclipse-mosquitto:2 ghcr.io/home-assistant/home-assistant:stable influxdb:2.7 ollama/ollama
 
 # Модели Whisper
 mkdir -p models/whisper
