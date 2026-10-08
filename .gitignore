@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+venv/
+*.tar
+*.tar.gz
+offline-images*
+models/
+ollama/
+influxdb/
+grafana/
+mosquitto/data/
+mosquitto/log/
+esphome/.esphome/
+esphome/secrets.yaml
