@@ -2,7 +2,7 @@
 
 > Контроль климата, газа, света, трекинг радаром, СКУД по лицу и отпечатку, голосовой ассистент **Astra**. Полностью офлайн, 2x Pi, Coral M.2 TPU.
 
-**Отдельное направление для конкурса научных работ:** [содержание работы](./docs/15_TENSOR_ACCELERATOR_CONTEST_OUTLINE.md) и [программа исследования](./docs/14_TENSOR_ACCELERATOR_RPI5_STUDY.md) о **принципах тензорного ускорения и его выигрыше относительно CPU того же Raspberry Pi 5**. Coral M.2 — экспериментальный образец, детекция лиц — одна прикладная задача; гараж — лишь сценарий применения. Приведённые ниже в старом дипломном черновике числа ускорения **не подтверждены измерениями** и не должны цитироваться как результаты исследования.
+**Отдельное направление для конкурса научных работ:** [начатая рукопись (план до 65 страниц)](./docs/16_TENSOR_ACCELERATION_MANUSCRIPT.md), [содержание](./docs/15_TENSOR_ACCELERATOR_CONTEST_OUTLINE.md) и [программа исследования](./docs/14_TENSOR_ACCELERATOR_RPI5_STUDY.md) о **принципах тензорного ускорения и его выигрыше относительно CPU того же Raspberry Pi 5**. [Протокол и инструмент измерений](./research/tensor_acceleration/README.md) готовятся отдельно. Coral M.2 — экспериментальный образец, детекция лиц — одна прикладная задача. Результатов измерений пока нет; приведённые ниже в старом дипломном черновике числа ускорения **не подтверждены**.
 
 **Финальная структура для диплома:**
 - **Pi4 — SERVER + ASTRA BRAIN** (192.168.4.1): Mosquitto, HA, InfluxDB (история), регулятор (автоматика), Astra Core (Piper TTS + Ollama), ESP control, GarageNet AP
@@ -30,6 +30,8 @@
 18. [`frigate/config.yml`](./frigate/config.yml) — Frigate для Pi5 + Coral pci:0
 19. [**14_TENSOR_ACCELERATOR_RPI5_STUDY.md**](./docs/14_TENSOR_ACCELERATOR_RPI5_STUDY.md) — принципы тензорных вычислений, математическая модель, сравнение CPU и ускорителя на Pi 5
 20. [**15_TENSOR_ACCELERATOR_CONTEST_OUTLINE.md**](./docs/15_TENSOR_ACCELERATOR_CONTEST_OUTLINE.md) — содержание конкурсной работы по главам
+21. [**16_TENSOR_ACCELERATION_MANUSCRIPT.md**](./docs/16_TENSOR_ACCELERATION_MANUSCRIPT.md) — рабочая рукопись с текстом введения, теорией, методикой и пустыми таблицами результатов
+22. [**research/tensor_acceleration/**](./research/tensor_acceleration/README.md) — воспроизводимый протокол, микробенчмарк и тесты
 
 ## 🚀 Быстрый старт
 
