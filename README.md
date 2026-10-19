@@ -2,7 +2,7 @@
 
 > Контроль климата, газа, света, трекинг радаром, СКУД по лицу и отпечатку, голосовой ассистент **Astra**. Полностью офлайн, 2x Pi, Coral M.2 TPU.
 
-**Отдельное направление для конкурса научных работ:** [новое содержание на согласование](./docs/15_TENSOR_ACCELERATOR_CONTEST_OUTLINE.md), [черновик рукописи со старой структурой (требует переработки)](./docs/16_TENSOR_ACCELERATION_MANUSCRIPT.md) и [программа исследования](./docs/14_TENSOR_ACCELERATOR_RPI5_STUDY.md) о **принципах тензорного ускорения и его выигрыше относительно CPU того же Raspberry Pi 5**. [Протокол и инструмент измерений](./research/tensor_acceleration/README.md) готовятся отдельно. Coral M.2 — экспериментальный образец, **полный конвейер детекции лиц** — основная прикладная задача. Результатов измерений пока нет; приведённые ниже в старом дипломном черновике числа ускорения **не подтверждены**.
+**Отдельное направление для конкурса научных работ:** [содержание на согласование](./docs/15_TENSOR_ACCELERATOR_CONTEST_OUTLINE.md), [проект введения по образцу](./docs/17_TENSOR_ACCELERATION_INTRODUCTION.md), [черновик рукописи со старой структурой (требует переработки)](./docs/16_TENSOR_ACCELERATION_MANUSCRIPT.md) и [программа исследования](./docs/14_TENSOR_ACCELERATOR_RPI5_STUDY.md) о **принципах тензорного ускорения и его выигрыше относительно CPU того же Raspberry Pi 5**. [Протокол и инструмент измерений](./research/tensor_acceleration/README.md) готовятся отдельно. Coral M.2 — экспериментальный образец, **полный конвейер детекции лиц** — основная прикладная задача. Результатов измерений пока нет; приведённые ниже в старом дипломном черновике числа ускорения **не подтверждены**.
 
 **Финальная структура для диплома:**
 - **Pi4 — SERVER + ASTRA BRAIN** (192.168.4.1): Mosquitto, HA, InfluxDB (история), регулятор (автоматика), Astra Core (Piper TTS + Ollama), ESP control, GarageNet AP
@@ -31,7 +31,8 @@
 19. [**14_TENSOR_ACCELERATOR_RPI5_STUDY.md**](./docs/14_TENSOR_ACCELERATOR_RPI5_STUDY.md) — принципы тензорных вычислений, математическая модель, сравнение CPU и ускорителя на Pi 5
 20. [**15_TENSOR_ACCELERATOR_CONTEST_OUTLINE.md**](./docs/15_TENSOR_ACCELERATOR_CONTEST_OUTLINE.md) — трёхглавное содержание конкурсной работы на согласование
 21. [**16_TENSOR_ACCELERATION_MANUSCRIPT.md**](./docs/16_TENSOR_ACCELERATION_MANUSCRIPT.md) — прежний черновик рукописи с отвергнутой структурой; содержимое ещё не перенесено под новое содержание
-22. [**research/tensor_acceleration/**](./research/tensor_acceleration/README.md) — воспроизводимый протокол, микробенчмарк и тесты
+22. [**17_TENSOR_ACCELERATION_INTRODUCTION.md**](./docs/17_TENSOR_ACCELERATION_INTRODUCTION.md) — проект введения по образцу: до аппаратных опытов без вымышленных результатов и апробации
+23. [**research/tensor_acceleration/**](./research/tensor_acceleration/README.md) — воспроизводимый протокол, микробенчмарк и тесты
 
 ## 🚀 Быстрый старт
 
