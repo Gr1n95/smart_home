@@ -26,6 +26,8 @@
 16. [**12_DEMO_STAND.md**](./docs/12_DEMO_STAND.md) — **макет для диплома: что реальное/что имитируем, демо-сценарий на 5 мин**
 17. [**13_PI4_INSTALL.md**](./docs/13_PI4_INSTALL.md) — **установка Pi4 по полочкам: ОС→сеть→Docker→стек→Astra, RAM-таблица**
 18. [`frigate/config.yml`](./frigate/config.yml) — Frigate для Pi5 + Coral pci:0
+19. [**14_WORDCRAFT_FEDORA_MENU.md**](./docs/14_WORDCRAFT_FEDORA_MENU.md) — как добавить локально собранный WordCraft в меню приложений Fedora
+20. [`scripts/desktop/install-wordcraft-desktop.sh`](./scripts/desktop/install-wordcraft-desktop.sh) — регистрация WordCraft в меню (`.desktop` + иконки, без sudo)
 
 ## 🚀 Быстрый старт
 

@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=WordCraft
+GenericName=Word Processor
+GenericName[ru]=Текстовый процессор
+Comment=Write and design documents; open and save Word files
+Comment[ru]=Тексты и вёрстка документов; открывает и сохраняет файлы Word
+Exec=@BIN@ %F
+TryExec=@BIN@
+Icon=ai.storyteller.wordcraft
+Terminal=false
+StartupNotify=true
+StartupWMClass=ai.storyteller.wordcraft
+Categories=Office;WordProcessor;
+Keywords=word;processor;document;docx;writer;text;letter;report;
+Keywords[ru]=ворд;документ;текст;вордкрафт;письмо;отчёт;
+MimeType=application/vnd.openxmlformats-officedocument.wordprocessingml.document;application/vnd.ms-word.document.macroEnabled.12;application/vnd.openxmlformats-officedocument.wordprocessingml.template;application/vnd.ms-word.template.macroEnabled.12;application/msword;application/msword-template;application/vnd.oasis.opendocument.text;application/rtf;text/rtf;text/markdown;text/x-tex;text/html;
