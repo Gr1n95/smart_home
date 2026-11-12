@@ -12,3 +12,9 @@ mosquitto/data/
 mosquitto/log/
 esphome/.esphome/
 esphome/secrets.yaml
+
+# Local experimental artifacts and biometric data — never commit these.
+research/tensor_acceleration/results/
+research/tensor_acceleration/models/
+research/tensor_acceleration/private_data/
+data/faces/
