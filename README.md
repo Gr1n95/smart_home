@@ -13,7 +13,7 @@
 1.  [**00_ANALYSIS.md**](./docs/00_ANALYSIS.md) — анализ задачи, риски, оценка
 2.  [**01_ARCHITECTURE.md**](./docs/01_ARCHITECTURE.md) — базовая архитектура (1 Pi)
 3.  [**01b_ARCHITECTURE_OFFLINE_DUAL_PI.md**](./docs/01b_ARCHITECTURE_OFFLINE_DUAL_PI.md) — v2: Офлайн на 2x Pi
-4.  [**01c_CORAL_INTEGRATION.md**](./docs/01c_CORAL_INTEGRATION.md) — старый план интеграции Coral: оценки скоростей, **не** измеренные бенчмарки
+4.  [**01c_CORAL_INTEGRATION.md**](./docs/01c_CORAL_INTEGRATION.md) — старый план интеграции Coral: оценки скоростей, **не** результаты измерений
 5.  [**07_FINAL_ARCHITECTURE_ASTRA.md**](./docs/07_FINAL_ARCHITECTURE_ASTRA.md) — **v3 ФИНАЛЬНАЯ для диплома: Pi4 Server+Astra, Pi5 Perception+Coral**
 6.  [**02_HARDWARE_BOM.md**](./docs/02_HARDWARE_BOM.md) — BOM с ценами DE
 7.  [**03_SOFTWARE_PLAN.md**](./docs/03_SOFTWARE_PLAN.md) — софт план, ESPHome, Python
@@ -33,7 +33,8 @@
 21. [**16_TENSOR_ACCELERATION_MANUSCRIPT.md**](./docs/16_TENSOR_ACCELERATION_MANUSCRIPT.md) — прежний черновик рукописи с отвергнутой структурой; содержимое ещё не перенесено под новое содержание
 22. [**17_TENSOR_ACCELERATION_INTRODUCTION.md**](./docs/17_TENSOR_ACCELERATION_INTRODUCTION.md) — проект введения по образцу: до аппаратных опытов без вымышленных результатов и апробации
 23. [**18_TENSOR_ACCELERATION_CHAPTER_1.md**](./docs/18_TENSOR_ACCELERATION_CHAPTER_1.md) — новый раздел 1 (ориентир ~15 страниц): математические основы, вычисления над тензорами, память, INT8, модели задержки, обзор исследований и выводы
-24. [**research/tensor_acceleration/**](./research/tensor_acceleration/README.md) — воспроизводимый протокол, микробенчмарк и тесты
+24. [**19_TENSOR_ACCELERATION_CHAPTER_2.md**](./docs/19_TENSOR_ACCELERATION_CHAPTER_2.md) — раздел 2: алгоритм обработки кадра (2.1) и разработка инструмента измерения (2.2)
+25. [**research/tensor_acceleration/**](./research/tensor_acceleration/README.md) — воспроизводимый протокол, диагностическая программа измерения времени и тесты
 
 ## 🚀 Быстрый старт
 
